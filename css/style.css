@@ -1,14 +1,30 @@
 * {
     box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .screen {
     background-color: #fcfcfc;
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    width: 1600px;
+    margin: auto;
 }
 
 .heading {
     font-size: 1.5em;
-    padding-left: 50px;
+    padding-left: 20px;
+    padding-top: 20px;
     color: #404a51;
 }
 
@@ -36,10 +52,15 @@ img {
 
 .card_details {
     color: #83898d;
-    padding: auto;
 }
 
 .card_name {
     color: #404a51;
-    padding-top: 25px;
+    padding-top: 50px;
+    font-size: 1.1em;
+}
+
+.card_email,
+card_city {
+    padding: 10px 0;
 }
