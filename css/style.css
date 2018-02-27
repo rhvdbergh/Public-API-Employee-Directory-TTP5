@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
+.screen {
+    background-color: #fcfcfc;
+}
+
+.heading {
+    font-size: 1.5em;
+    padding-left: 50px;
+    color: #404a51;
+}
+
+li {
+    list-style: none;
+    background-color: white;
+    border-radius: 5px;
+    border: 2px solid #dfdfdf;
+    width: 450px;
+    height: 170px;
+    display: inline-block;
+    margin: 20px;
+}
+
+img {
+    border-radius: 50%;
+    padding: 21px;
+    float: left;
+}
+
+.card_img_container,
+.card_details {
+    display: inline;
+}
+
+.card_details {
+    color: #83898d;
+    padding: auto;
+}
+
+.card_name {
+    color: #404a51;
+    padding-top: 25px;
+}
