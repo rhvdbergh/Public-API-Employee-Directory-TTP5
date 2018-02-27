@@ -15,3 +15,37 @@
 // For extra credit, a filter is added to filter search through employee names. Also, 
 // when the modal window is open, the user can move forwards or backwards to view other
 // employees.
+
+! function() { // mvc
+
+    const $cardContainer = $('#card_container');
+
+    function updateNames() {
+
+        // retrieve 12 names using the randomuser.me api
+        // send a query to retrieve 12 results
+        $.get('https://randomuser.me/api/', { results: 12 }, (results) => {
+
+            const employeeList = results.results;
+
+            $cardContainer.html(''); // make sure the screen is cleared 
+
+            let htmlString = '<ul>';
+            // cycle through each employee, building the html to show the employee cards
+            for (let i = 0; i < 12; i++) {
+                htmlString += '<li class="card"><div class="card_img_container">';
+                htmlString += `<img src=${employeeList[i].picture.large}></div>`;
+                htmlString += `<div class="card_details"><h2 class="card_name">${employeeList[i].name.first}</h2>`;
+                htmlString += `<p class="card_email">${employeeList[i].email}</p>`;
+                htmlString += `<p class="card_city">${employeeList[i].location.city}</p></div></li>`;
+            }
+            htmlString += '</ul>';
+
+            $cardContainer.html(htmlString); // udate the html page
+
+
+        });
+    }
+
+    updateNames();
+}();
