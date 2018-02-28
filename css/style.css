@@ -28,7 +28,7 @@ body {
     color: #404a51;
 }
 
-li {
+.card {
     list-style: none;
     background-color: white;
     border-radius: 5px;
@@ -37,6 +37,10 @@ li {
     height: 170px;
     display: inline-block;
     margin: 20px;
+}
+
+.card:hover {
+    box-shadow: 2px 2px 2px gray;
 }
 
 img {
