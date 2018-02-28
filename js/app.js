@@ -19,6 +19,9 @@
 ! function() { // mvc
 
     const $cardContainer = $('#card_container');
+    const $modalScreen = $('#modal_screen'); // this fills the whole viewing port 
+    const $modalContainer = $('#modal_container')
+    let employeeList = {}; // list contains the returned object from the API
 
     // function to capitalize first letter and letters after spaces of a given string
     function capitalizeString(str) {
@@ -46,7 +49,7 @@
         // send a query to retrieve 12 results
         $.get('https://randomuser.me/api/', { results: 12 }, (results) => {
 
-            const employeeList = results.results;
+            employeeList = results.results;
 
             $cardContainer.html(''); // make sure the screen is cleared 
 
@@ -55,7 +58,7 @@
             for (let i = 0; i < 12; i++) {
 
                 htmlString += '<li class="card"><div class="card_img_container">';
-                htmlString += `<img src=${employeeList[i].picture.large}></div>`;
+                htmlString += `<img class="card_icon" src=${employeeList[i].picture.large} alt="${employeeList[i].picture.large}"></div>`;
 
                 // prepare the capitalized first and last name of the employee
                 let employeeName = employeeList[i].name.first + ' ' + employeeList[i].name.last;
@@ -63,14 +66,92 @@
 
                 htmlString += `<div class="card_details"><h2 class="card_name">${employeeName}</h2>`;
                 htmlString += `<p class="card_email">${employeeList[i].email}</p>`;
-                htmlString += `<p class="card_city">${employeeList[i].location.city}</p></div></li>`;
+
+                // capitalize the city's name
+                let cityCapitalized = capitalizeString(employeeList[i].location.city);
+                htmlString += `<p class="card_city">${cityCapitalized}</p></div></li>`;
             } // end for
             htmlString += '</ul>';
 
-            $cardContainer.html(htmlString); // udate the html page
+            $cardContainer.html(htmlString); // update the html page
 
         }); // end $.get()
     }
 
+    // this function expects a date of birth in the format provided by the API
+    // example: 1983-07-14 07:29:45
+    // it returns a numerical date of birth in the format mm-dd-yy
+    function formatBirthday(dob) {
+        let formattedDOB = dob.substring(5, 7) + '/' + dob.substring(8, 10) + '/' + dob.substring(2, 4);
+        return formattedDOB;
+    }
+
+    // shows the modal screen according with info according to a given index in the 
+    // employeeList
+    function showModalScreen(index) {
+
+        $modalContainer.html('');
+
+        let employee = employeeList[index];
+        let htmlString = `<img class="modal_icon" src=${employee.picture.large} alt=${employee.picture.large}>`;
+
+        // prepare the capitalized first and last name of the employee
+        let employeeName = employee.name.first + ' ' + employee.name.last;
+        employeeName = capitalizeString(employeeName);
+
+        htmlString += `<h2 class="modal_name">${employeeName}</h2>`;
+        htmlString += `<p class="modal_email">${employee.email}</p>`;
+
+        // capitalize the city's name
+        let cityCapitalized = capitalizeString(employee.location.city);
+        htmlString += `<p class="modal_city">${cityCapitalized}</p>`;
+        htmlString += `<p class="modal_line">______________________________________________________________________________________________________</p>`;
+        htmlString += `<p class="modal_telephone">${employee.cell}</p>`;
+
+        let address = `${employee.location.street}, ${employee.location.state}, ${employee.location.postcode}`;
+        address = capitalizeString(address);
+        htmlString += `<p class="modal_address">${address}</p>`;
+
+        let birthday = formatBirthday(employee.dob);
+        htmlString += `<p class="modal_birthday">Birthday: ${birthday}</p>`;
+
+        $modalContainer.html(htmlString); // update the html page
+
+        $modalScreen.show();
+    }
+
     updateNames();
+
+    // EVENT HANDLERS
+
+    $cardContainer.on('click', (event) => {
+        const $clicked = $(event.target);
+        // if any of the elements in a specific li is clicked:
+        if ($clicked.is('li') || $clicked.parents().is('li')) {
+
+            let index = 0;
+            // find the index of the card clicked
+            if ($clicked.is('li')) { // the card itself was clicked, not an element on it
+                index = $clicked.index();
+            } else { // one of the child elements was clicked - find the parent <li>
+                index = $clicked.parents('li').index();
+            }
+
+            // show the modal screen with info from the clicked index
+            showModalScreen(index);
+        }
+    })
+
+    $modalScreen.on('click', (event) => {
+        const $clicked = $(event.target);
+        if ($clicked.is('#modal_container') || $clicked.parents().is('#modal_container')) {
+            // do nothing
+            // later, the code for moving left or right through the index will be displayed here
+        } else
+            $modalScreen.hide();
+    });
+
+
+
+
 }();
