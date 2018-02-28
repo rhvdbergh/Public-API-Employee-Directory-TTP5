@@ -20,6 +20,26 @@
 
     const $cardContainer = $('#card_container');
 
+    // function to capitalize first letter and letters after spaces of a given string
+    function capitalizeString(str) {
+
+        // change the first letter to a capital
+        let capStr = str.charAt(0).toUpperCase() + str.substring(1);
+
+        // for each space, the next letter should be capitalized, 
+        // so split into separate snippets wherever ' ' is found, 
+        // capitalize each first letter of each snippet, 
+        // and join the string together again with ' '
+        capStr = capStr.split(' ')
+            .map(snippet => {
+                snippet = snippet.charAt(0).toUpperCase() + snippet.substring(1);
+                return snippet;
+            })
+            .join(' ');
+
+        return capStr;
+    } // end capitalizeString()
+
     function updateNames() {
 
         // retrieve 12 names using the randomuser.me api
@@ -33,18 +53,23 @@
             let htmlString = '<ul>';
             // cycle through each employee, building the html to show the employee cards
             for (let i = 0; i < 12; i++) {
+
                 htmlString += '<li class="card"><div class="card_img_container">';
                 htmlString += `<img src=${employeeList[i].picture.large}></div>`;
-                htmlString += `<div class="card_details"><h2 class="card_name">${employeeList[i].name.first}</h2>`;
+
+                // prepare the capitalized first and last name of the employee
+                let employeeName = employeeList[i].name.first + ' ' + employeeList[i].name.last;
+                employeeName = capitalizeString(employeeName);
+
+                htmlString += `<div class="card_details"><h2 class="card_name">${employeeName}</h2>`;
                 htmlString += `<p class="card_email">${employeeList[i].email}</p>`;
                 htmlString += `<p class="card_city">${employeeList[i].location.city}</p></div></li>`;
-            }
+            } // end for
             htmlString += '</ul>';
 
             $cardContainer.html(htmlString); // udate the html page
 
-
-        });
+        }); // end $.get()
     }
 
     updateNames();
