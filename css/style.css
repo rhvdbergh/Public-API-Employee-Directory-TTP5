@@ -166,3 +166,12 @@ card_city {
 .modal_next_button:hover {
     text-shadow: 1px 1px 1px black;
 }
+
+input {
+    position: absolute;
+    right: 10%;
+    top: 20px;
+    font-size: 1.2em;
+    padding: 5px;
+    border: 2px solid #dfdfdf;
+}

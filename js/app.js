@@ -170,8 +170,6 @@
                 }
                 showModalScreen(modalWindowIndex);
             }
-            // do nothing
-            // later, the code for moving left or right through the index will be displayed here
         } else {
             // the grayed out area around the modal container box has been clicked
             $modalScreen.hide();
