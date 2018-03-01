@@ -22,6 +22,8 @@
     const $modalScreen = $('#modal_screen'); // this fills the whole viewing port 
     const $modalContainer = $('#modal_container')
     let employeeList = {}; // list contains the returned object from the API
+    let activeList = {}; // the list that is currently active - will be employeeList by default, 
+    let searchList = {} // searchList to narrow down employees when user is searching
     let modalWindowIndex = 0; // the current index of the employee selected in the modal window
 
     // function to capitalize first letter and letters after spaces of a given string
@@ -44,37 +46,42 @@
         return capStr;
     } // end capitalizeString()
 
-    function updateNames() {
+    function showNames(list) {
+        $cardContainer.html(''); // make sure the screen is cleared 
+
+        let htmlString = '<ul>';
+        // cycle through each employee, building the html to show the employee cards
+        for (employee in list) {
+
+            htmlString += '<li class="card"><div class="card_img_container">';
+            htmlString += `<img class="card_icon" src=${list[employee].picture.large} alt="${list[employee].picture.large}"></div>`;
+
+            // prepare the capitalized first and last name of the employee
+            let employeeName = list[employee].name.first + ' ' + list[employee].name.last;
+            employeeName = capitalizeString(employeeName);
+
+            htmlString += `<div class="card_details"><h2 class="card_name">${employeeName}</h2>`;
+            htmlString += `<p class="card_email">${list[employee].email}</p>`;
+
+            // capitalize the city's name
+            let cityCapitalized = capitalizeString(list[employee].location.city);
+            htmlString += `<p class="card_city">${cityCapitalized}</p></div></li>`;
+        } // end for
+        htmlString += '</ul>';
+
+        $cardContainer.html(htmlString); // update the html page
+
+    }
+
+    function getInitialEmployees() {
 
         // retrieve 12 names using the randomuser.me api
         // send a query to retrieve 12 results
-        $.get('https://randomuser.me/api/', { results: 12 }, (results) => {
-
-            employeeList = results.results;
-
-            $cardContainer.html(''); // make sure the screen is cleared 
-
-            let htmlString = '<ul>';
-            // cycle through each employee, building the html to show the employee cards
-            for (let i = 0; i < 12; i++) {
-
-                htmlString += '<li class="card"><div class="card_img_container">';
-                htmlString += `<img class="card_icon" src=${employeeList[i].picture.large} alt="${employeeList[i].picture.large}"></div>`;
-
-                // prepare the capitalized first and last name of the employee
-                let employeeName = employeeList[i].name.first + ' ' + employeeList[i].name.last;
-                employeeName = capitalizeString(employeeName);
-
-                htmlString += `<div class="card_details"><h2 class="card_name">${employeeName}</h2>`;
-                htmlString += `<p class="card_email">${employeeList[i].email}</p>`;
-
-                // capitalize the city's name
-                let cityCapitalized = capitalizeString(employeeList[i].location.city);
-                htmlString += `<p class="card_city">${cityCapitalized}</p></div></li>`;
-            } // end for
-            htmlString += '</ul>';
-
-            $cardContainer.html(htmlString); // update the html page
+        // only from countries with a Latin-character alphabet
+        $.get('https://randomuser.me/api/', { results: 12, nat: "au,br,ca,ch,de,dk,es,fi,fr,gb,ie,nl,nz,us" }, (results) => {
+            employeeList = results.results; // save the retrieved list of employees
+            activeList = employeeList; // make this list the active list 
+            showNames(activeList);
 
         }); // end $.get()
     }
@@ -93,7 +100,7 @@
 
         $modalContainer.html('');
 
-        let employee = employeeList[index];
+        let employee = activeList[index];
         let htmlString = '<span class="modal_exit_button">X</span>';
         htmlString += '<span class="modal_prev_button">\<</span>';
         htmlString += '<span class="modal_next_button">\></span>';
@@ -127,7 +134,7 @@
 
     // INITIAL SETUP
 
-    updateNames();
+    getInitialEmployees();
 
     // EVENT HANDLERS
 
@@ -147,6 +154,7 @@
         }
     })
 
+    // event handler for when modal screen is showing
     $modalScreen.on('click', (event) => {
         const $clicked = $(event.target);
         if ($clicked.is('#modal_container') || $clicked.parents().is('#modal_container')) {
@@ -159,13 +167,13 @@
                     // assign the modalWindowIndex to the last object number in the list
                     // the number of employees is the number of keys in the object
                     // Object.keys(object) returns an array, so we can call length on it
-                    modalWindowIndex = Object.keys(employeeList).length - 1;
+                    modalWindowIndex = Object.keys(activeList).length - 1;
                 }
                 showModalScreen(modalWindowIndex);
             } // as above, check when past beginning of list, so too check if past end of list
             if ($clicked.is('.modal_next_button')) {
                 modalWindowIndex += 1;
-                if (modalWindowIndex > Object.keys(employeeList).length - 1) {
+                if (modalWindowIndex > Object.keys(activeList).length - 1) {
                     modalWindowIndex = 0;
                 }
                 showModalScreen(modalWindowIndex);
@@ -176,7 +184,28 @@
         }
     });
 
+    function search(str) {
+        activeList = {}; // clear the activeList of employees
+        let counter = 0;
+        for (var employee in employeeList) {
+            const fullName = (employeeList[employee].name.first + ' ' + employeeList[employee].name.last).toLowerCase();;
+            if (fullName.includes(str.toLowerCase())) {
+                activeList[counter] = employeeList[employee];
+                counter++;
+            }
+        }
+        showNames(activeList);
+    }
 
+    // event handler for searches
+    $('#search_box').on('input', (event) => {
+        searchString = $(event.target).val(); // retrieve value from search box
+        if (searchString === '') { // the user deleted everything in the search box
+            activeList = employeeList;
+            showNames(activeList);
+        } else { // the user added something to the search list
+            search(searchString);
+        }
 
-
+    });
 }();
