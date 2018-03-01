@@ -71,20 +71,7 @@
 
         $cardContainer.html(htmlString); // update the html page
 
-    }
-
-    function getInitialEmployees() {
-
-        // retrieve 12 names using the randomuser.me api
-        // send a query to retrieve 12 results
-        // only from countries with a Latin-character alphabet
-        $.get('https://randomuser.me/api/', { results: 12, nat: "au,br,ca,ch,de,dk,es,fi,fr,gb,ie,nl,nz,us" }, (results) => {
-            employeeList = results.results; // save the retrieved list of employees
-            activeList = employeeList; // make this list the active list 
-            showNames(activeList);
-
-        }); // end $.get()
-    }
+    } // end showNames()
 
     // this function expects a date of birth in the format provided by the API
     // example: 1983-07-14 07:29:45
@@ -130,7 +117,38 @@
         $modalContainer.html(htmlString); // update the html page
 
         $modalScreen.show();
+    } // end showModalScreen()
+
+    function search(str) {
+        activeList = {}; // clear the activeList of employees
+        let counter = 0;
+        // cycle through the employeeList and find matches
+        // add these matches to the active list
+        for (var employee in employeeList) {
+            // search should be available on first name, last name, and username
+            let fullName = employeeList[employee].name.first + ' ' + employeeList[employee].name.last;
+            fullName += ' ' + employeeList[employee].login.username;
+            fullName = fullName.toLowerCase();
+            if (fullName.includes(str.toLowerCase())) {
+                activeList[counter] = employeeList[employee];
+                counter++;
+            }
+        }
+        showNames(activeList);
     }
+
+    function getInitialEmployees() {
+
+        // retrieve 12 names using the randomuser.me api
+        // send a query to retrieve 12 results
+        // only from countries with a Latin-character alphabet
+        $.get('https://randomuser.me/api/', { results: 12, nat: "au,br,ca,ch,de,dk,es,fi,fr,gb,ie,nl,nz,us" }, (results) => {
+            employeeList = results.results; // save the retrieved list of employees
+            activeList = employeeList; // make this list the active list 
+            showNames(activeList);
+
+        }); // end $.get()
+    } // end getInitialEmployees()
 
     // INITIAL SETUP
 
@@ -184,19 +202,6 @@
         }
     });
 
-    function search(str) {
-        activeList = {}; // clear the activeList of employees
-        let counter = 0;
-        for (var employee in employeeList) {
-            const fullName = (employeeList[employee].name.first + ' ' + employeeList[employee].name.last).toLowerCase();;
-            if (fullName.includes(str.toLowerCase())) {
-                activeList[counter] = employeeList[employee];
-                counter++;
-            }
-        }
-        showNames(activeList);
-    }
-
     // event handler for searches
     $('#search_box').on('input', (event) => {
         searchString = $(event.target).val(); // retrieve value from search box
@@ -206,6 +211,5 @@
         } else { // the user added something to the search list
             search(searchString);
         }
-
     });
 }();
