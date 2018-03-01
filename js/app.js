@@ -22,6 +22,7 @@
     const $modalScreen = $('#modal_screen'); // this fills the whole viewing port 
     const $modalContainer = $('#modal_container')
     let employeeList = {}; // list contains the returned object from the API
+    let modalWindowIndex = 0; // the current index of the employee selected in the modal window
 
     // function to capitalize first letter and letters after spaces of a given string
     function capitalizeString(str) {
@@ -93,7 +94,11 @@
         $modalContainer.html('');
 
         let employee = employeeList[index];
-        let htmlString = `<img class="modal_icon" src=${employee.picture.large} alt=${employee.picture.large}>`;
+        let htmlString = '<span class="modal_exit_button">X</span>';
+        htmlString += '<span class="modal_prev_button">\<</span>';
+        htmlString += '<span class="modal_next_button">\></span>';
+
+        htmlString += `<img class="modal_icon" src=${employee.picture.large} alt=${employee.picture.large}>`;
 
         // prepare the capitalized first and last name of the employee
         let employeeName = employee.name.first + ' ' + employee.name.last;
@@ -120,6 +125,8 @@
         $modalScreen.show();
     }
 
+    // INITIAL SETUP
+
     updateNames();
 
     // EVENT HANDLERS
@@ -129,26 +136,46 @@
         // if any of the elements in a specific li is clicked:
         if ($clicked.is('li') || $clicked.parents().is('li')) {
 
-            let index = 0;
             // find the index of the card clicked
             if ($clicked.is('li')) { // the card itself was clicked, not an element on it
-                index = $clicked.index();
+                modalWindowIndex = $clicked.index();
             } else { // one of the child elements was clicked - find the parent <li>
-                index = $clicked.parents('li').index();
+                modalWindowIndex = $clicked.parents('li').index();
             }
-
             // show the modal screen with info from the clicked index
-            showModalScreen(index);
+            showModalScreen(modalWindowIndex);
         }
     })
 
     $modalScreen.on('click', (event) => {
         const $clicked = $(event.target);
         if ($clicked.is('#modal_container') || $clicked.parents().is('#modal_container')) {
+            if ($clicked.is('.modal_exit_button')) {
+                $modalScreen.hide();
+            }
+            if ($clicked.is('.modal_prev_button')) {
+                modalWindowIndex -= 1;
+                if (modalWindowIndex < 0) {
+                    // assign the modalWindowIndex to the last object number in the list
+                    // the number of employees is the number of keys in the object
+                    // Object.keys(object) returns an array, so we can call length on it
+                    modalWindowIndex = Object.keys(employeeList).length - 1;
+                }
+                showModalScreen(modalWindowIndex);
+            } // as above, check when past beginning of list, so too check if past end of list
+            if ($clicked.is('.modal_next_button')) {
+                modalWindowIndex += 1;
+                if (modalWindowIndex > Object.keys(employeeList).length - 1) {
+                    modalWindowIndex = 0;
+                }
+                showModalScreen(modalWindowIndex);
+            }
             // do nothing
             // later, the code for moving left or right through the index will be displayed here
-        } else
+        } else {
+            // the grayed out area around the modal container box has been clicked
             $modalScreen.hide();
+        }
     });
 
 
