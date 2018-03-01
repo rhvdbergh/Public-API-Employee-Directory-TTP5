@@ -17,14 +17,17 @@ body {
 }
 
 .container {
-    width: 1600px;
+    width: 1480px;
     margin: auto;
 }
+
+#card_container {}
 
 .heading {
     font-size: 1.5em;
     padding-left: 20px;
     padding-top: 20px;
+    padding-bottom: 20px;
     color: #404a51;
 }
 
@@ -140,7 +143,8 @@ card_city {
     cursor: pointer;
     font-weight: bold;
     padding: 15px;
-    text-shadow: 3px 3px 3px gray, 1px 1px 1px black;
+    color: gray;
+    text-shadow: 3px 3px 3px lightgray, 1px 1px 1px gray;
     transition: 0.2s;
 }
 
@@ -164,7 +168,7 @@ card_city {
 .modal_exit_button:hover,
 .modal_prev_button:hover,
 .modal_next_button:hover {
-    text-shadow: 1px 1px 1px black;
+    text-shadow: 1px 1px 1px gray;
 }
 
 input {
@@ -174,4 +178,19 @@ input {
     font-size: 1.2em;
     padding: 5px;
     border: 2px solid #dfdfdf;
+}
+
+@media only screen and (max-width: 1480px) {
+    .container {
+        width: 990px;
+    }
+}
+
+@media only screen and (max-width: 990px) {
+    .container {
+        width: 495px;
+    }
+    input {
+        top: 70px;
+    }
 }
