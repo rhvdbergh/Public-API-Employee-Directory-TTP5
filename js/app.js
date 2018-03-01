@@ -172,6 +172,23 @@
         }
     })
 
+    function decreaseModalWindowIndex() {
+        modalWindowIndex -= 1;
+        if (modalWindowIndex < 0) {
+            // assign the modalWindowIndex to the last object number in the list
+            // the number of employees is the number of keys in the object
+            // Object.keys(object) returns an array, so we can call length on it
+            modalWindowIndex = Object.keys(activeList).length - 1;
+        }
+    }
+
+    function increaseModalWindowIndex() {
+        modalWindowIndex += 1;
+        if (modalWindowIndex > Object.keys(activeList).length - 1) {
+            modalWindowIndex = 0;
+        }
+    }
+
     // event handler for when modal screen is showing
     $modalScreen.on('click', (event) => {
         const $clicked = $(event.target);
@@ -180,25 +197,34 @@
                 $modalScreen.hide();
             }
             if ($clicked.is('.modal_prev_button')) {
-                modalWindowIndex -= 1;
-                if (modalWindowIndex < 0) {
-                    // assign the modalWindowIndex to the last object number in the list
-                    // the number of employees is the number of keys in the object
-                    // Object.keys(object) returns an array, so we can call length on it
-                    modalWindowIndex = Object.keys(activeList).length - 1;
-                }
+                decreaseModalWindowIndex();
                 showModalScreen(modalWindowIndex);
             } // as above, check when past beginning of list, so too check if past end of list
             if ($clicked.is('.modal_next_button')) {
-                modalWindowIndex += 1;
-                if (modalWindowIndex > Object.keys(activeList).length - 1) {
-                    modalWindowIndex = 0;
-                }
+                increaseModalWindowIndex();
                 showModalScreen(modalWindowIndex);
             }
         } else {
             // the grayed out area around the modal container box has been clicked
             $modalScreen.hide();
+        }
+    });
+
+    // this event handler checks to see if the right or left arrow is pressed
+    // if the modal window is open, the previous or next card is shown
+    $(window).keydown((event) => {
+
+        if ($modalScreen.is(':visible')) { // check to see if the modal window is showing
+            // check to see if the left arrow was pressed
+            if (event.key === 'ArrowLeft' && $modalScreen.is(':visible')) {
+                decreaseModalWindowIndex();
+                showModalScreen(modalWindowIndex);
+            } // check for the right arrow
+            if (event.key === 'ArrowRight') {
+                increaseModalWindowIndex();
+                showModalScreen(modalWindowIndex);
+
+            }
         }
     });
 
