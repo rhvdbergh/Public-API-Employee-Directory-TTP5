@@ -193,3 +193,10 @@ input {
         top: 70px;
     }
 }
+
+@media only screen and (max-width: 480px) {
+    input {
+        width: 100%;
+        position: static;
+    }
+}
