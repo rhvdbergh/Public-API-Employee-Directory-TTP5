@@ -38,6 +38,7 @@ body {
     height: 170px;
     display: inline-block;
     margin: 20px;
+    overflow: auto;
 }
 
 .card:hover {
