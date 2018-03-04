@@ -35,7 +35,7 @@ body {
     border-radius: 5px;
     border: 2px solid #dfdfdf;
     width: 450px;
-    height: 170px;
+    height: 185px;
     display: inline-block;
     margin: 20px;
     overflow: auto;
@@ -47,7 +47,10 @@ body {
 
 .card_icon {
     border-radius: 50%;
-    padding: 21px;
+    padding-top: 26px;
+    padding-bottom: 26px;
+    padding-left: 20px;
+    padding-right: 20px;
     float: left;
 }
 
